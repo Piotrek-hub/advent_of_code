@@ -26,7 +26,7 @@ func (e *Elf) AddToTotalCalories(calories int) {
 	e.TotalCalories += calories
 }
 
-func (e *Elf) CalculateTotalCalories() error {
+func (e *Elf) calculateTotalCalories() error {
 	for _, v := range e.FoodsCaloriesArray {
 		caloriesValue, err := strconv.Atoi(v)
 		if err != nil {
@@ -66,18 +66,18 @@ func getCaloriesArrayFromFile(fileContent string) [][]string {
 	return finalCaloriesArray
 }
 
-func InitElfes(caloriesArray [][]string) []*Elf {
-	var elfes []*Elf
+func initElfs(caloriesArray [][]string) []*Elf {
+	var elfs []*Elf
 
 	for _, v := range caloriesArray {
 		e := NewElf()
 		e.FoodsCaloriesArray = v
-		e.CalculateTotalCalories()
+		e.calculateTotalCalories()
 
-		elfes = append(elfes, e)
+		elfs = append(elfs, e)
 	}
 
-	return elfes
+	return elfs
 }
 
 func GetElfWithMostCalories(elfes []*Elf) *Elf {
@@ -100,7 +100,7 @@ func solve() (int, error) {
 
 	caloriesArray := getCaloriesArrayFromFile(fileContent)
 
-	elfs := InitElfes(caloriesArray)
+	elfs := initElfs(caloriesArray)
 
 	elfWithMostCalories := GetElfWithMostCalories(elfs)
 
