@@ -80,10 +80,10 @@ func initElfs(caloriesArray [][]string) []*Elf {
 	return elfs
 }
 
-func GetElfWithMostCalories(elfes []*Elf) *Elf {
+func getElfWithMostCalories(elfs []*Elf) *Elf {
 	var resultElf *Elf
-	resultElf = elfes[0]
-	for _, elf := range elfes {
+	resultElf = elfs[0]
+	for _, elf := range elfs {
 		if elf.GetTotalCalories() > resultElf.GetTotalCalories() {
 			resultElf = elf
 		}
@@ -92,27 +92,63 @@ func GetElfWithMostCalories(elfes []*Elf) *Elf {
 	return resultElf
 }
 
-func solve() (int, error) {
+func getThreeElfsWithTopCalories(elfs []*Elf) []*Elf {
+	top1, top2, top3 := elfs[0], elfs[1], elfs[2]
+	for _, elf := range elfs {
+		if elf.GetTotalCalories() > top3.GetTotalCalories() {
+			if elf.GetTotalCalories() > top2.GetTotalCalories() {
+				if elf.GetTotalCalories() > top1.GetTotalCalories() {
+					top2 = top1
+					top3 = top2
+					top1 = elf
+					continue
+				}
+				top3 = top2
+				top2 = elf
+				continue
+			}
+			top3 = elf
+			continue
+		}
+	}
+
+	return []*Elf{top1, top2, top3}
+}
+
+func sumElfsCalories(elfs []*Elf) int {
+	var sum int
+	for _, elf := range elfs {
+		sum += elf.GetTotalCalories()
+	}
+
+	return sum
+}
+
+func solve() (int, int, error) {
 	fileContent, err := loadFileContent(FILE_PATH)
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
 	caloriesArray := getCaloriesArrayFromFile(fileContent)
 
 	elfs := initElfs(caloriesArray)
 
-	elfWithMostCalories := GetElfWithMostCalories(elfs)
+	elfWithMostCalories := getElfWithMostCalories(elfs)
 
-	return elfWithMostCalories.GetTotalCalories(), nil
+	topThreeElfs := getThreeElfsWithTopCalories(elfs)
+
+	topThreeSum := sumElfsCalories(topThreeElfs)
+
+	return elfWithMostCalories.GetTotalCalories(), topThreeSum, nil
 }
 
 func main() {
-	mostCalories, err := solve()
+	mostCalories, topThreeCaloriesSum, err := solve()
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	log.Println(mostCalories)
+	log.Println(mostCalories, " \n ", topThreeCaloriesSum)
 }
